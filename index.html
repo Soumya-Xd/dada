@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Agreement E-Sign</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    #agreement-img {
+      width: 100%;
+      border: 2px solid #000;
+      border-radius: 8px;
+    }
+
+    .canvas-wrapper {
+      margin: 20px 0;
+    }
+
+    canvas {
+      border: 2px solid #333;
+      border-radius: 8px;
+      touch-action: none;
+    }
+
+    select {
+      padding: 8px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .controls {
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #ffa500;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff8800;
+    }
+    #helpBtn {
+  animation: blink 1s infinite;
+  background-color: red;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Agreement with E-Signature</h2>
+
+    <img id="agreement-img" src="aggrement.png" alt="Agreement Image">
+
+    <div class="canvas-wrapper">
+      <h3>Choose Signer & Sign Below:</h3>
+      <select id="signer-select">
+        <option value="soumya">Soumya Singha Roy</option>
+        <option value="debanshu">Debanshu Dey</option>
+      </select>
+      <br>
+      <canvas id="sign-canvas" width="300" height="150"></canvas>
+      <div class="controls">
+        <button id="helpBtn" onclick="triggerUPIPayment()">Help</button>
+
+        <button onclick="clearCanvas()">Clear</button>
+        <button onclick="applySignature()">Apply Signature</button>
+        <button onclick="restoreAgreement()">Restore</button>
+      </div>
+    </div>
+
+    <button onclick="downloadSignedAgreement()">Download Signed Agreement</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('sign-canvas');
+    const ctx = canvas.getContext('2d');
+    const agreementImg = document.getElementById('agreement-img');
+    const signerSelect = document.getElementById('signer-select');
+    const originalSrc = agreementImg.src;
+
+    let drawing = false;
+    let soumyaSigned = false;
+function triggerUPIPayment() {
+  if (confirm("Vagaban Tumarah mangal kare Debanshu now send ₹500 to Soumya via PhonePe")) {
+    const upiLink = `upi://pay?pa=6296520890@axl&pn=Soumya%20Singha%20Roy&am=500&cu=INR&tn=help%20me%20out`;
+    window.location.href = upiLink;
+  }
+}
+
+    function startPosition(e) {
+      drawing = true;
+      draw(e);
+    }
+
+    function endPosition() {
+      drawing = false;
+      ctx.beginPath();
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches[0].clientX) - rect.left;
+      const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+
+    canvas.addEventListener('mousedown', startPosition);
+    canvas.addEventListener('mouseup', endPosition);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchstart', startPosition);
+    canvas.addEventListener('touchend', endPosition);
+    canvas.addEventListener('touchmove', draw);
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function applySignature() {
+      const signer = signerSelect.value;
+
+      if (signer === 'soumya' && soumyaSigned) {
+        alert('Soumya has already signed.');
+        return;
+      }
+
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+
+      const img = new Image();
+      img.onload = () => {
+        tempCanvas.width = img.width;
+        tempCanvas.height = img.height;
+        tempCtx.drawImage(img, 0, 0);
+
+        const signatureImage = new Image();
+        signatureImage.onload = () => {
+          // Position based on signer
+          if (signer === 'soumya') {
+            tempCtx.drawImage(signatureImage, 120, img.height - 70, 150, 50);
+            soumyaSigned = true;
+          } else if (signer === 'debanshu') {
+            tempCtx.drawImage(signatureImage, img.width - 480, img.height - 70, 150, 50);
+          }
+
+          agreementImg.src = tempCanvas.toDataURL('image/png');
+        };
+        signatureImage.src = canvas.toDataURL();
+      };
+      img.src = agreementImg.src;
+    }
+
+    function restoreAgreement() {
+      agreementImg.src = originalSrc;
+      soumyaSigned = false;
+    }
+
+    function downloadSignedAgreement() {
+      const link = document.createElement('a');
+      link.download = 'signed_agreement.png';
+      link.href = agreementImg.src;
+      link.click();
+    }
+  </script>
+</body>
+</html>  
