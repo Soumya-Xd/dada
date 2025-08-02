@@ -45,30 +45,75 @@
       margin: 10px 0;
     }
 
-    button {
-      padding: 10px 15px;
-      margin: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 5px;
-      background-color: #ffa500;
-      color: white;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #ff8800;
-    }
-    #helpBtn {
-  animation: blink 1s infinite;
-  background-color: red;
+button {
+  padding: 12px 20px;
+  margin: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition: background 0.4s, transform 0.3s;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
+/* Stylish Apply Button */
+#applyBtn {
+  background: linear-gradient(45deg, #00c853, #64dd17);
+  box-shadow: 0 0 10px #00c853, 0 0 20px #64dd17;
 }
+
+#applyBtn:hover {
+  background: linear-gradient(45deg, #64dd17, #00c853);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00e676, 0 0 30px #76ff03;
+}
+
+/* Animated Help Button */
+#helpBtn {
+  background: linear-gradient(90deg, #ff1744, #f50057, #d500f9);
+  background-size: 300% 300%;
+  animation: glowing 3s linear infinite, blinking 1s steps(2, start) infinite;
+  box-shadow: 0 0 15px #ff1744;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#helpBtn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 25px #ff1744, 0 0 40px #f50057, 0 0 60px #d500f9;
+}
+
+@keyframes glowing {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes blinking {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
 
   </style>
 </head>
@@ -81,7 +126,7 @@
     <div class="canvas-wrapper">
       <h3>Choose Signer & Sign Below:</h3>
       <select id="signer-select">
-        <option value="soumya">Soumya Singha Roy</option>
+
         <option value="debanshu">Debanshu Dey</option>
       </select>
       <br>
@@ -108,10 +153,10 @@
     let drawing = false;
     let soumyaSigned = false;
 function triggerUPIPayment() {
-  if (confirm("Vagaban Tumarah mangal kare Debanshu now send ₹500 to Soumya via PhonePe")) {
-    const upiLink = `upi://pay?pa=6296520890@axl&pn=Soumya%20Singha%20Roy&am=500&cu=INR&tn=help%20me%20out`;
-    window.location.href = upiLink;
-  }
+  const upiLink = `upi://pay?pa=6296520890@axl&pn=Soumya%20Singha%20Roy&am=500&cu=INR&tn=Vagaban%20Tumarah%20mangal%20kare%20Debanshu%20🙏`;
+  window.location.href = upiLink;
+}
+
 }
 
     function startPosition(e) {
